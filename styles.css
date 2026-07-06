@@ -1,0 +1,384 @@
+/* ── Console de test — assistant portfolio ─────────────────────────────── */
+
+:root {
+  --bg: #f4f1e9;
+  --surface: #fcfaf4;
+  --surface-2: #efeadd;
+  --ink: #26231c;
+  --muted: #7c7666;
+  --line: #d9d2c0;
+  --accent: #b0491d;
+  --accent-soft: #f3e0d3;
+  --ok: #3e7d4e;
+  --warn: #b8860b;
+  --err: #a32e1c;
+  --user-bubble: #2b2822;
+  --user-ink: #f4f1e9;
+  --font-body: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1915;
+    --surface: #23201a;
+    --surface-2: #2b2721;
+    --ink: #ece7da;
+    --muted: #9a937f;
+    --line: #3c362b;
+    --accent: #d97742;
+    --accent-soft: #3a2a20;
+    --ok: #6aab7a;
+    --warn: #d1a437;
+    --err: #d96a55;
+    --user-bubble: #e8e2d1;
+    --user-ink: #1b1915;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mono { font-family: var(--font-mono); }
+
+/* ── Barre supérieure ──────────────────────────────────────────────────── */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.brand { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-radius: 3px 3px 12px 3px;
+  flex-shrink: 0;
+}
+
+.brand-text h1 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.endpoint {
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.2s;
+}
+.dot.busy { background: var(--warn); animation: pulse 1s ease-in-out infinite; }
+.dot.ok   { background: var(--ok); }
+.dot.err  { background: var(--err); }
+
+@keyframes pulse {
+  50% { opacity: 0.35; }
+}
+
+/* ── Espace de travail : chat + journal ────────────────────────────────── */
+
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  min-height: 0;
+}
+
+/* ── Volet chat ────────────────────────────────────────────────────────── */
+
+.chat-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--line);
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.session-note {
+  font-size: 0.68rem;
+  color: var(--muted);
+  padding: 0.25rem 0;
+}
+
+.msg { max-width: 78%; display: flex; flex-direction: column; gap: 0.25rem; }
+.msg.user { align-self: flex-end; align-items: flex-end; }
+.msg.assistant, .msg.error { align-self: flex-start; align-items: flex-start; }
+
+.msg-meta {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  padding: 0 0.25rem;
+}
+
+.bubble {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.msg.user .bubble {
+  background: var(--user-bubble);
+  color: var(--user-ink);
+  border-radius: 12px 12px 3px 12px;
+  white-space: pre-wrap;
+}
+
+.msg.assistant .bubble {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 3px 12px 12px 12px;
+}
+
+.msg.error .bubble {
+  background: transparent;
+  border: 1px dashed var(--err);
+  color: var(--err);
+  border-radius: 3px 12px 12px 12px;
+  font-size: 0.85rem;
+}
+
+/* rendu markdown minimal dans les réponses */
+.bubble p + p, .bubble p + ul, .bubble ul + p,
+.bubble p + ol, .bubble ol + p, .bubble pre + p, .bubble p + pre { margin-top: 0.55em; }
+.bubble ul, .bubble ol { padding-left: 1.2em; }
+.bubble li + li { margin-top: 0.2em; }
+.bubble code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+.bubble pre {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.6em 0.8em;
+  overflow-x: auto;
+}
+.bubble pre code { background: none; padding: 0; font-size: 0.8rem; }
+.bubble a { color: var(--accent); }
+.bubble .md-h { font-weight: 600; }
+
+/* indicateur de saisie */
+.typing { display: inline-flex; gap: 0.3rem; padding: 0.3rem 0.1rem; }
+.typing span {
+  width: 0.4rem; height: 0.4rem; border-radius: 50%;
+  background: var(--muted);
+  animation: blink 1.2s infinite;
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+
+/* ── Zone de saisie ────────────────────────────────────────────────────── */
+
+#composer {
+  flex-shrink: 0;
+  padding: 0.75rem 1.5rem 1rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+#input {
+  width: 100%;
+  resize: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  padding: 0.55rem 0.75rem;
+  max-height: 10rem;
+  overflow-y: auto;
+}
+#input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.composer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+#counter { font-size: 0.68rem; color: var(--muted); }
+#counter.over { color: var(--err); font-weight: 600; }
+
+.composer-actions { display: flex; gap: 0.5rem; }
+
+.btn-primary {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 4px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-ghost {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+.btn-ghost:hover { color: var(--ink); border-color: var(--muted); }
+
+/* ── Volet journal ─────────────────────────────────────────────────────── */
+
+.log-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface-2);
+}
+
+.log-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.log-head h2 {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+#log { flex: 1; overflow-y: auto; padding: 0.6rem 0.75rem; }
+
+.log-empty { font-size: 0.7rem; color: var(--muted); padding: 0.25rem; }
+
+.log-entry {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  margin-bottom: 0.5rem;
+  font-size: 0.72rem;
+}
+.log-entry summary {
+  font-family: var(--font-mono);
+  cursor: pointer;
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  list-style: none;
+}
+.log-entry summary::-webkit-details-marker { display: none; }
+.log-entry summary::before { content: "▸"; font-size: 0.6rem; }
+.log-entry[open] summary::before { content: "▾"; }
+
+.log-status {
+  font-weight: 700;
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+.log-status.s2 { color: var(--ok); }
+.log-status.s4, .log-status.s5, .log-status.s0 { color: var(--err); }
+
+.log-block { padding: 0 0.6rem 0.5rem; }
+.log-block > span {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.log-block pre {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.45;
+  background: var(--surface-2);
+  border-radius: 3px;
+  padding: 0.4rem 0.5rem;
+  margin-top: 0.2rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+/* ── Mobile ────────────────────────────────────────────────────────────── */
+
+@media (max-width: 860px) {
+  .workspace { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .chat-pane { border-right: none; }
+  .log-pane { border-top: 1px solid var(--line); max-height: 32dvh; }
+  .msg { max-width: 92%; }
+  .brand-text h1 { font-size: 0.85rem; }
+  .endpoint { display: none; }
+}

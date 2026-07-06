@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Console de test · Assistant portfolio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23b0491d%22/><text y=%2272%22 x=%2228%22 font-size=%2260%22 fill=%22white%22 font-family=%22monospace%22>λ</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">λ</span>
+    <div class="brand-text">
+      <h1>Console de test · Assistant portfolio</h1>
+      <p class="endpoint mono" id="endpoint-label">POST …lambda-url.eu-west-1.on.aws</p>
+    </div>
+  </div>
+  <div class="status mono">
+    <span class="dot" id="status-dot"></span>
+    <span id="status-text">en attente</span>
+  </div>
+</header>
+
+<main class="workspace">
+
+  <section class="chat-pane" aria-label="Conversation">
+    <div class="messages" id="messages">
+      <p class="session-note mono">— session ouverte · les échanges ne sont pas conservés —</p>
+    </div>
+
+    <form id="composer" autocomplete="off">
+      <textarea id="input" rows="1" placeholder="Posez une question à l'assistant…"
+                aria-label="Votre question"></textarea>
+      <div class="composer-row">
+        <span id="counter" class="mono">0 / 3000</span>
+        <div class="composer-actions">
+          <button type="button" id="clear-chat" class="btn-ghost">Effacer</button>
+          <button type="submit" id="send" class="btn-primary">Envoyer&nbsp;↵</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <aside class="log-pane" aria-label="Journal des requêtes">
+    <div class="log-head">
+      <h2 class="mono">journal des requêtes</h2>
+      <button type="button" id="clear-log" class="btn-ghost">vider</button>
+    </div>
+    <div id="log">
+      <p class="log-empty mono">aucune requête envoyée</p>
+    </div>
+  </aside>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
