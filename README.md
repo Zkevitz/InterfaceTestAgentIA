@@ -35,30 +35,6 @@ Pour tester une autre URL sans modifier le code :
 https://<votre-page>/?endpoint=https://autre-fonction.lambda-url.eu-west-1.on.aws/
 ```
 
-## Déploiement sur GitHub Pages
-
-1. Créer un dépôt GitHub et pousser ces fichiers :
-
-   ```bash
-   git init
-   git add index.html styles.css app.js README.md
-   git commit -m "Interface de test du proxy Lambda"
-   git branch -M main
-   git remote add origin https://github.com/<utilisateur>/<depot>.git
-   git push -u origin main
-   ```
-
-2. Sur GitHub : **Settings → Pages → Build and deployment** →
-   Source : *Deploy from a branch* → Branch : `main` / `/ (root)` → **Save**.
-
-3. La page est publiée sous `https://<utilisateur>.github.io/<depot>/`
-   (compter une à deux minutes pour la première publication).
-
-> **CORS** : la Function URL doit autoriser l'origine GitHub Pages
-> (`https://<utilisateur>.github.io`) ou `*`, avec la méthode `POST` et
-> l'en-tête `content-type`. C'est configuré côté AWS (Function URL → CORS),
-> pas dans ce code.
-
 ## Test en local
 
 Ouvrir `index.html` directement dans un navigateur, ou servir le dossier :
